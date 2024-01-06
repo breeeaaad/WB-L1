@@ -1,30 +1,32 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"os"
+	"math/rand"
 	"os/signal"
+	"syscall"
+	"time"
 )
 
-func Worker(data chan int) {
-	fmt.Println(<-data)
-}
-
+// Для завершения программы использую Graceful Shutdown
 func main() {
 	var N int
 	fmt.Scanln(&N)
-	data := make(chan int)
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer func() {
+		fmt.Print("Stop")
+		stop()
+		time.Sleep(time.Minute)
+	}()
+	r := make(chan int)
 	for i := 0; i < N; i++ {
-		go Worker(data)
-		data <- i
+		go worker(r)
+		r <- rand.Intn(10)
 	}
-	for {
-		select {
-		case <-c:
-			close(data)
-			return
-		}
-	}
+	<-ctx.Done() //На этом этапе главный поток блокируется и ждет Ctrl+C
+}
+
+func worker(r chan int) {
+	fmt.Println(<-r)
 }

@@ -8,7 +8,7 @@ import (
 
 type Cache struct {
 	sync.Mutex             //Если только запись, то можно воспользоваться обычным мьютексом
-	Data       map[int]int //Есть sync.Map для быстрого чтения данных, но у нас идет запись
+	Data       map[int]int //Есть sync.Map для быстрого чтения данных(проблема cache contention в RWMutex), но у нас идет запись
 }
 
 func (c *Cache) Set(key int, value int) {

@@ -3,10 +3,19 @@ package main
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 )
 
+type Inc struct {
+	//sync.Mutex //Для синхронизации с помощью мьютексов
+	c int64
+}
+
 func main() {
-	var b, c int
+	var (
+		c int
+		b Inc
+	)
 	fmt.Scanln(&c)
 	wg := new(sync.WaitGroup)
 	mu := new(sync.Mutex)
@@ -14,11 +23,12 @@ func main() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup, mu *sync.Mutex) {
 			defer wg.Done()
-			mu.Lock()
-			b++
-			mu.Unlock()
+			atomic.AddInt64(&b.c, 1) //пакет atomic для счетчика или мьютексы для блокировки изменений
+			// b.Lock()
+			// b.c++
+			// b.Unlock()
 		}(wg, mu)
 	}
-	wg.Wait()
-	fmt.Println(b)
+	wg.Wait() //Безопасно вытащить значение при преобразовании с помощью пакета atomic можно с помощью функции atomic.LoadInt64()
+	fmt.Println(b.c)
 }
