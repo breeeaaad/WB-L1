@@ -11,7 +11,7 @@ func main() {
 	fmt.Scanln(&TTL)
 	now := time.Now()
 	info := make(chan int)
-	for time.Since(now) < time.Second*time.Duration(TTL) {
+	for time.Since(now) < time.Second*time.Duration(TTL) { //цикл while, пока не истечет время
 		go func() {
 			fmt.Println(<-info)
 		}()

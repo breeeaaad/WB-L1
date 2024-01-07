@@ -11,6 +11,7 @@ type Cache struct {
 	Data       map[int]int //Есть sync.Map для быстрого чтения данных(проблема cache contention в RWMutex), но у нас идет запись
 }
 
+// Реализация вставки, как работа кэша
 func (c *Cache) Set(key int, value int) {
 	c.Lock()
 	defer c.Unlock()
