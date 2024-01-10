@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+//Конвеер чисел
 func main() {
 	nums := []int{5, 2, 5, 23, 6}
 	x := make(chan int, 5)

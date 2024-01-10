@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+//Использование побитовых операций
 func setBit(num int64, pos, val int) int64 {
 	if val == 1 {
 		return num | (1 << pos)
